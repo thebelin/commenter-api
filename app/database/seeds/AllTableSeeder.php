@@ -1,54 +1,48 @@
 <?php
  
-class MessagesTableSeeder extends Seeder {
+class AllTableSeeder extends Seeder {
  
     public function run()
     {
 
-        // Delete all the existing users
-        DB::table('users')->delete();
+        // Delete all the existing data
+        // DB::table('users')->delete();
+        // DB::table('threads')->delete();
+        // DB::table('sites')->delete();
+        // DB::table('messages')->delete();
+
         // Create the new test user
         $userObj = new User;
-        $userObj->create(array(
-            'email'    => 'test@thebelin.com',
-            'password' => 'test_password'
-        ));
+        $userObj->email    = 'test@thebelin.com';
+        $userObj->password = 'test_secret';
+        $userObj->save();
         // The id of the new object will be used in the next insert
         $userId = $userObj->id;
 
         // THREADS
-        DB::table('threads')->delete();
         $threadObj = new Thread;
-        $threadObj->create(array(
-            'heading' => 'Comments',
-            'user_id' => $userId
-        ));
+        $threadObj->heading = 'Comments';
+        $threadObj->user_id = $userId;
+        $threadObj->save();
+        // The id of the new object will be used in the next insert        
         $threadId = $threadObj->id;
 
-        // Delete all the existing sites
-        DB::table('sites')->delete();
-        // Create new test sites
+        // Create new test site
         $siteObj = new Site;
-        $siteObj->create(array(
-            'thread_id' => $thread_id,
-            'hostUrl'   => '//localhost:8000'
-        ));
-        $siteId = $siteObj->id;
+        $siteObj->thread_id = $threadId;
+        $siteObj->hostUrl   = '//localhost:8000';
+        $siteObj->save();
 
-        // Delete all the existing messages
-        DB::table('messages')->delete();
         // Create new test messages
         for ($i = 0; $i < 10; $i++) {
             Message::create(array(
-                'site_id'  => $siteId,
-                'email'    => 'test' . $i . '@thebelin.com',
-                'message'  => 'This is a test Message '. $i,
-                'gravatar' => md5('thebelin@gmail.com')
+                'thread_id' => $threadId,
+                'email'     => 'test' . $i . '@thebelin.com',
+                'message'   => 'This is a test Message '. $i,
+                'gravatar'  => md5('thebelin@gmail.com')
             ));
 
         }
-
-
 
     }
  

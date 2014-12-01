@@ -12,11 +12,8 @@ class CreateAllTables extends Migration {
      */
     public function up()
     {
-        // Drops        
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('threads');
-        Schema::dropIfExists('sites');
-        Schema::dropIfExists('messages');        
+        // perform the removal first
+        $this->down();
         
         // Creation Schema for application tables
         Schema::create('users', function(Blueprint $table)
@@ -24,11 +21,11 @@ class CreateAllTables extends Migration {
             // Define Fields
             $table->increments('id', true);
             $table->timestamps();
-            $table->string('email');
+            $table->string('username');
             $table->string('password');
 
             // Define index
-            $table->index('email', 'password');
+            $table->index('username', 'password');
         });
 
         Schema::create('threads', function(Blueprint $table)
@@ -91,7 +88,27 @@ class CreateAllTables extends Migration {
      */
     public function down()
     {
-        //
+        // Drop foreign keys
+        // Schema::table('threads', function(Blueprint $table)
+        // {
+        //    $table->dropForeign('threads_user_id_foreign');
+        // });
+
+        // Schema::table('sites', function(Blueprint $table)
+        // {
+        //     $table->dropForeign('sites_thread_id_foreign');
+        // });
+
+        // Schema::table('messages', function(Blueprint $table)
+        // {
+        //     $table->dropForeign('messages_thread_id_foreign');
+        // });
+
+        // Drop tables
+        Schema::dropIfExists('messages');
+        Schema::dropIfExists('sites');
+        Schema::dropIfExists('threads');
+        Schema::dropIfExists('users');
     }
 
 }

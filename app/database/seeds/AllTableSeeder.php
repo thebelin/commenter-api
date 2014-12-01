@@ -4,17 +4,10 @@ class AllTableSeeder extends Seeder {
  
     public function run()
     {
-
-        // Delete all the existing data
-        // DB::table('users')->delete();
-        // DB::table('threads')->delete();
-        // DB::table('sites')->delete();
-        // DB::table('messages')->delete();
-
         // Create the new test user
         $userObj = new User;
-        $userObj->email    = 'test@thebelin.com';
-        $userObj->password = 'test_secret';
+        $userObj->username = 'testUser';
+        $userObj->password = Hash::make('secret');
         $userObj->save();
         // The id of the new object will be used in the next insert
         $userId = $userObj->id;
@@ -44,6 +37,5 @@ class AllTableSeeder extends Seeder {
 
         }
 
-    }
- 
+    } 
 }

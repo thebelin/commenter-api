@@ -10,11 +10,14 @@ class MessageController extends BaseController {
 	 * 
 	 * @return JSONP Response
 	 */
-	public function anyList ($start = 0, $howMany = 5)
+	public function all ($start = 0, $howMany = 5)
 	{
 		Log::info(__METHOD__ . "start: {$start} howMany {$howMany}");
 		
 		$messages = array('messages' => DB::table('messages')->skip($start)->take($howMany)->get());
+
+		Log::info(__METHOD__ . "messages:", $messages);
+		
 
 		// Load up a keyed object with the messages from the database
 		//$messages = array('messages' => Message::all()->skip($start)->take($howMany));
@@ -28,7 +31,7 @@ class MessageController extends BaseController {
 	 * 
 	 * @return JSONP Response
 	 */
-	public function anyAdd()
+	public function add ()
 	{
 		// Get the "data" Post item
 		$args = Input::get('data', array());

@@ -32,6 +32,7 @@
 			margin: 16px 0 0 0;
 		}
 	</style>
+	<script src = "/script/include.js"></script>
 </head>
 <body>
 	<div class="welcome">

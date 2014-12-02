@@ -10,7 +10,6 @@ angular.module('CommenterApp', ['vcRecaptcha'])
       // infinite scroll variables
       $scope.currentRecord = 0;
       $scope.getPerTrip    = 5;
-      $scope.gotAll        = false;
       
       console.log('size of recordset: ' + $scope.currentRecord);
       $scope.numPages = function () {
@@ -55,9 +54,11 @@ angular.module('CommenterApp', ['vcRecaptcha'])
       $scope.addComment = function () {
         if ($scope.isValidComment()) {
           // Add the captcha data to the information being posted to the server
-          
-          $http.post('/messages/add', {data: $scope.commentItem}).
-            success(function(data, status, headers, config) {
+          $http.post({
+            method: 'POST',
+            url:    'http://testUser:secret@localhost:8000/messages/add',
+            data:   $scope.commentItem
+          }).success(function(data, status, headers, config) {
               // clear the comment item
               $scope.commentItem = {url: window.location.href};
               // Do the listScroll method simulating a scroll event

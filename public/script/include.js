@@ -5,11 +5,12 @@
  *
  * @author Belin Fieldson <thebelin@gmail.com>
  *
+ * @paran Object d      A reference to the document object
  * @param Object config An object literal containing config data for the includer
  *                      .sources Array    Scripts to include as strings which are the src attribute
  *                      .init    Function A function to run after all the classes are included 
  */
-var _includer = function (config) {
+(function (d, config) {
   // @type array An array of the javascript src files to load for this app
   config.sources = (config.sources instanceof Array) ? config.sources : [];
 
@@ -20,7 +21,7 @@ var _includer = function (config) {
   config.init = (typeof(config.init) === 'function') ? config.init : function () {};
 
   // @type array All script elements
-  config._scripts = document.getElementsByTagName("script");
+  config._scripts = d.getElementsByTagName("script");
 
   // @type integer What index of the scripts array is currently being processed
   config._scriptId = 0;
@@ -36,9 +37,11 @@ var _includer = function (config) {
   };
 
   // @type function Load the scripts, using the previously defined values
-  config._loadScripts = function () {
+  //
+  // @param script establishes the script variable which will be replaced
+  config._loadScripts = function (script) {
     if (config._scriptId < config.sources.length) {
-      script = document.createElement('script');
+      script = d.createElement('script');
       script.type = 'text/javascript';
       script.async = true;
       // When the script loads, it should either load the next
@@ -52,38 +55,38 @@ var _includer = function (config) {
         }
       };
       script.src = config.sources[config._scriptId];
-      document.getElementsByTagName('head')[0].appendChild(script);
+      d.getElementsByTagName('head')[0].appendChild(script);
     }
   };
-
-  // @type function Determine if all the scripts have finished loading
-  config._scriptsDone = function () {
-    return Boolean(config.sources.indexOf(false) === -1);
-  }
-
+  console.log('config.widgets:', config.widgets);
   // Add the anchor elements to the html of the source page
   for (var widgetId in config.widgets) {
     // Check if the target div(s) exist
-    var elem = document.getElementById(widgetId);
+    var elem = d.getElementById(widgetId);
     if (elem === null) {
       // create divs which don't exist
-      elem = document.createElement('div');
+      elem = d.createElement('div');
       elem.setAttribute('id', widgetId);
-      document.body && document.body.appendChild(elem);
+      elem.innerHTML = config.widgets[widgetId];
+      
+      // If there's a document body, add to it, otherwise wait for it
+      if (d.body) {
+        d.body.appendChild(elem);
+      } else {
+        d.setTimeout(function() {
+          d.body && d.body.appendChild(elem)
+        }, 500);
+      }
+    } else {      
+      // Add the content html to the anchor divs
+      elem.innerHTML = config.widgets[widgetId];
     }
-    // Add the content html to the anchor divs    
-    elem.innerHTML = config.widgets[widgetId];
   }
 
   // Inject the classes which don't already exist into the head
   config._loadScripts();
 
-};
-
-//
-// Example:
-// 
-_includer({
+}(document, {
   // Script Sources to be used in the page
   sources : [
     "//ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js",
@@ -99,4 +102,4 @@ _includer({
     console.log('running init');
   }
 
-});
+}));

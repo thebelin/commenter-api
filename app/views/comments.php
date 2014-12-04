@@ -90,10 +90,15 @@
 </head>
 
 <body>
-	<div data-ng-app = "CommenterApp" data-ng-controller = "CommenterController" class = "commentBox">
+	<div
+		data-ng-app        = "CommenterApp"
+		data-ng-controller = "CommenterController"
+
+		class              = "commentBox">
 		<div class="welcome">
 			<b>Comments:</b>
 		</div>
+		<!-- This is the infinite scrolling content -->
 		<div class = "commentList" id = "commentList"
 			data-ng-scroll = "listScroll()">
 			<div
@@ -112,6 +117,7 @@
 					</div>
 			</div>
 		</div>
+		<!-- This is the end of the infinite scrolling content -->
 		<div class = "commenterForm">
 			<label for = "commenterComment">Your Comment:</label>
 			<textarea id = "commenterCommentEntry" data-ng-model = "commentItem.message"></textarea>

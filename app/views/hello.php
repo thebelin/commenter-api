@@ -32,7 +32,6 @@
 			margin: 16px 0 0 0;
 		}
 	</style>
-	<script src = "/script/include.js"></script>
 </head>
 <body>
 	<div class="welcome">
@@ -40,4 +39,6 @@
 		<h1>You have arrived.</h1>
 	</div>
 </body>
+<script src = "/script/include.js"></script>
+
 </html>

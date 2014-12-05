@@ -14,7 +14,8 @@
   // @type array An array of the javascript src files to load for this app
   config.sources = (config.sources instanceof Array) ? config.sources : [];
 
-  // @type array An array of the javascript src files to load for this app
+  // @type object Each key is an id of a div on the page to inject content
+  // into, and the value is the content
   config.widgets = (typeof config.widgets === 'object') ? config.widgets : {};
 
   // @type function A function to run after the scripts have all been included
@@ -36,11 +37,38 @@
     return false;
   };
 
+  // Add an element and fill it in the page body
+  // @param  {string} elemId  The id attribute of the element which houses the content
+  // @param  {string} html    The html to fill the element with
+ config._appendToBody = function (elemId, html) {
+    // Check if the target div(s) exist
+    var elem = d.getElementById(elemId);
+    if (elem === null) {
+      // create divs which don't exist
+      elem = d.createElement('div');
+      elem.setAttribute('id', elemId);
+      elem.innerHTML = html;
+
+      // If there's a document body, add to it, otherwise wait for it
+      if (d.body) {
+        d.body.appendChild(elem);
+      } else {
+        setTimeout(function() {
+          config._appendToBody(elemId, html);
+        }, 100);
+      }
+    } else {      
+      // Add the content html to the anchor divs
+      elem.innerHTML = html;
+    }
+  };
+
   // @type function Load the scripts, using the previously defined values
-  //
   // @param script establishes the script variable which will be replaced
   config._loadScripts = function (script) {
-    if (config._scriptId < config.sources.length) {
+    if (config._scriptId < config.sources.length
+      && !config._scriptExists(config.sources[config._scriptId])
+      ) {
       script = d.createElement('script');
       script.type = 'text/javascript';
       script.async = true;
@@ -58,29 +86,10 @@
       d.getElementsByTagName('head')[0].appendChild(script);
     }
   };
-  console.log('config.widgets:', config.widgets);
+
   // Add the anchor elements to the html of the source page
   for (var widgetId in config.widgets) {
-    // Check if the target div(s) exist
-    var elem = d.getElementById(widgetId);
-    if (elem === null) {
-      // create divs which don't exist
-      elem = d.createElement('div');
-      elem.setAttribute('id', widgetId);
-      elem.innerHTML = config.widgets[widgetId];
-      
-      // If there's a document body, add to it, otherwise wait for it
-      if (d.body) {
-        d.body.appendChild(elem);
-      } else {
-        d.setTimeout(function() {
-          d.body && d.body.appendChild(elem)
-        }, 500);
-      }
-    } else {      
-      // Add the content html to the anchor divs
-      elem.innerHTML = config.widgets[widgetId];
-    }
+    config._appendToBody(widgetId, config.widgets[widgetId]);
   }
 
   // Inject the classes which don't already exist into the head

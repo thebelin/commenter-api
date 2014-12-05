@@ -82,10 +82,7 @@
 			margin-bottom:.5em;
 		}
 	</style>
-	<script type="text/javascript" src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js"></script>
-	<script type="text/javascript" src = "//www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
-	<script type="text/javascript" src = "/script/angular-recaptcha.min.js"></script>
-	<script type="text/javascript" src = "/script/commenterClient.js"></script>
+	<script type="text/javascript" src = "/script/include.js"></script>
 
 </head>
 

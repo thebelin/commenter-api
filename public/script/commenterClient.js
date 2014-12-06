@@ -6,12 +6,12 @@ angular.module('CommenterApp', ['vcRecaptcha'])
       $scope.comments     = [];
       $scope.commentItem  = {url: window.location.href};
       $scope.recaptchaKey = '6Lf10f0SAAAAAF1wRn6VEjGvr6YTnH_XypcTmPrs';
+      $scope.threadid     = 1;
 
       // infinite scroll variables
       $scope.currentRecord = 0;
       $scope.getPerTrip    = 5;
       
-      console.log('size of recordset: ' + $scope.currentRecord);
       $scope.numPages = function () {
         return Math.ceil($scope.comments.length / $scope.numPerPage);
       };
@@ -25,7 +25,9 @@ angular.module('CommenterApp', ['vcRecaptcha'])
         count = count || $scope.getPerTrip;
 
         // Call the list route with the limits
-        $http.jsonp('/messages/list/'+ start + '/' + count + '?callback=JSON_CALLBACK').
+        $http.jsonp('/api/thread/all/' +
+          $scope.threadid + '/' + start + '/' + count + 
+          '?callback=JSON_CALLBACK').
           success(function(data, status, headers, config) {
             if (data.messages) {
 
@@ -86,7 +88,8 @@ angular.module('CommenterApp', ['vcRecaptcha'])
 
       // Attach the scroll event in the commentList to the infinte fetch routine
       $scope.commentElem = document.getElementById('commentList');
-      if ($scope.commentElem !== 'undefined') {
+      console.log('assign event function to infinite scroll list', $scope.commentElem);
+      if ($scope.commentElem) {
         $scope.commentElem.onscroll = $scope.listScroll;
       }
 

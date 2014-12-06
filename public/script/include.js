@@ -105,7 +105,15 @@
   ],
   // widgets with the id of the element to add them to
   widgets : {
-    commenter : "<div class='test'></div>"
+    // commenter : "<div class=\"test\" " +
+    // " data-ng-app        = \"CommenterApp\" " +
+    // " data-ng-controller = \"CommenterController\"> " +
+    // "   <div vc-recaptcha " +
+    // "     theme    = \"clean\" " +
+    // "     lang     = \"en\" " +
+    // "         ng-model = \"commentItem.captcha\" " +
+    // "         key      = \"\'6Lf10f0SAAAAAF1wRn6VEjGvr6YTnH_XypcTmPrs\'\" " +
+    // " </div>\""
   },
   init : function () {
     console.log('running init');

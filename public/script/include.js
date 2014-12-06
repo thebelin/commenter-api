@@ -14,9 +14,13 @@
   // @type array An array of the javascript src files to load for this app
   config.sources = (config.sources instanceof Array) ? config.sources : [];
 
+  // @type array An array of the src locations for styles to load for this app
+  config.styles = (config.styles instanceof Array) ? config.styles : [];
+
   // @type object Each key is an id of a div on the page to inject content
-  // into, and the value is the content
+  //              into, and the value is the content
   config.widgets = (typeof config.widgets === 'object') ? config.widgets : {};
+
 
   // @type function A function to run after the scripts have all been included
   config.init = (typeof(config.init) === 'function') ? config.init : function () {};
@@ -24,13 +28,29 @@
   // @type array All script elements
   config._scripts = d.getElementsByTagName("script");
 
+  // @type array All script elements
+  config._styles = d.getElementsByTagName("style");
+
   // @type integer What index of the scripts array is currently being processed
   config._scriptId = 0;
+
+  // @type integer What index of the styles array is currently being processed
+  config._styleId = 0;
   
   // @type function Check if the script with the specified src already exists
   config._scriptExists = function (newSrc) {
     for (var i = 0; i < config._scripts.length; i++) {
       if (config._scripts[i].src === newSrc) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // @type function Check if the style with the specified src already exists
+  config._styleExists = function (newSrc) {
+    for (var i = 0; i < config._styles.length; i++) {
+      if (config._styles[i].src === newSrc) {
         return true;
       }
     }
@@ -63,27 +83,74 @@
     }
   };
 
+  // @type function Do a script injection
+  // @param  {string}   elemType The type of element to add
+  // @param  {string}   src      The location of the source content
+  // @param  {Function} callback A function to call after loading
+  // @param  {bool}     doAsync  Whether to load async
+  // @param  {object}   node     An object to be replaced in the function body
+  // @return {void}
+  config._inject = function(elemType, src, callback, doAsync, node) {
+    if (src) {
+      // handle style or script injections
+      if (elemType === 'style') {
+        node       = d.createElement('link');
+        node.type  = 'text/css';
+        node.rel   = 'stylesheet';
+        node.href  = src;
+        node.media = 'screen';
+      } else {
+        node       = d.createElement(elemType || 'script');
+        node.type  = 'text/javascript';
+        node.src   = src;
+      }
+      node.async  = doAsync || false;
+      // Set the callback for the load event of the element if it's been provided
+      if (typeof callback === 'function') {
+        node.onload = callback;
+      }
+      // Append the node element to the head
+      d.getElementsByTagName('head')[0].appendChild(node);
+    }
+  };
+
   // @type function Load the scripts, using the previously defined values
-  // @param script establishes the script variable which will be replaced
-  config._loadScripts = function (script) {
+  config._loadScripts = function () {
     if (config._scriptId < config.sources.length
-      && !config._scriptExists(config.sources[config._scriptId])
+      && !config._styleExists(config.sources[config._scriptId])
       ) {
-      script = d.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      // When the script loads, it should either load the next
-      // script, or run the init if all the scripts are complete
-      script.onload = function () {
-        config._scriptId ++;
-        if (config._scriptId === config.sources.length) {
-          config.init();
-        } else {
-          config._loadScripts();
+      config._inject(
+        'script',
+        config.sources[config._scriptId],
+        function () {
+          config._scriptId ++;
+          if (config._scriptId === config.sources.length) {
+            config.init();
+          } else {
+            config._loadScripts();
+          }
+        },
+        true
+      );
+    }
+  };
+
+  // @type function Load the styles
+   config._loadStyles = function () {
+    if (config._styleId < config.styles.length
+      && !config._styleExists(config.styles[config._styleId])
+      ) {
+      console.log('add style: ', config.styles[config._styleId]);
+      config._inject(
+        'style',
+        config.styles[config._styleId],
+        function () {
+          config._styleId ++;
+          if (config._styleId < config.styles.length) {
+            config._loadStyles();
+          }
         }
-      };
-      script.src = config.sources[config._scriptId];
-      d.getElementsByTagName('head')[0].appendChild(script);
+      );
     }
   };
 
@@ -91,6 +158,9 @@
   for (var widgetId in config.widgets) {
     config._appendToBody(widgetId, config.widgets[widgetId]);
   }
+
+  // Inject the styles into the head
+  config._loadStyles();
 
   // Inject the classes which don't already exist into the head
   config._loadScripts();
@@ -103,18 +173,19 @@
     "/script/angular-recaptcha.min.js",
     "/script/commenterClient.js"
   ],
+
+  // Style sources to be added to the page  
+  styles : [
+    "//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css",
+    "//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css"
+  ],
+
   // widgets with the id of the element to add them to
   widgets : {
-    // commenter : "<div class=\"test\" " +
-    // " data-ng-app        = \"CommenterApp\" " +
-    // " data-ng-controller = \"CommenterController\"> " +
-    // "   <div vc-recaptcha " +
-    // "     theme    = \"clean\" " +
-    // "     lang     = \"en\" " +
-    // "         ng-model = \"commentItem.captcha\" " +
-    // "         key      = \"\'6Lf10f0SAAAAAF1wRn6VEjGvr6YTnH_XypcTmPrs\'\" " +
-    // " </div>\""
+    commenter: "<div class='test' data-test-data='test'><h1><i class='fa fa-wrench'></i>&nbsp;Work in progress</h1></div>",
+    article:   "<div class='testArticle' data-test-data='the real article'></div>"
   },
+
   init : function () {
     console.log('running init');
   }

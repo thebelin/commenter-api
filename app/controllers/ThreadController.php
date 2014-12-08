@@ -8,16 +8,23 @@ class ThreadController extends BaseController {
      * @param $threadId unsigned The thread identifier
      * @param $start    integer  (optional) Where to start the return
      * @param $howMany  integer  (optional) How many items to return
+     * @param $reverse  boolean  (optional) Whether to reverse the order of return (latest first)
      * 
      * @return JSONP Response
      */
-    public function all ($threadId, $start = 0, $howMany = 5)
+    public function all ($threadId, $start = 0, $howMany = 5, $reverse = false)
     {        
         $messages = Message::where(
             'thread_id',
             '=',
             $threadId
-        )->skip($start)->take($howMany)->get();
+        )->skip($start)->take($howMany);
+
+        if ($reverse) {
+            $messages = $messages->orderBy('updated_at', 'DESC', 'id', 'DESC');
+        }
+        
+        $messages = $messages->get();
 
         //Log::info(__METHOD__ . "messages:", $messages);
 

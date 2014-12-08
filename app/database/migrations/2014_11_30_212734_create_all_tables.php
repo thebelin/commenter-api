@@ -21,8 +21,12 @@ class CreateAllTables extends Migration {
             // Define Fields
             $table->increments('id', true);
             $table->timestamps();
-            $table->string('username');
+            $table->string('email');
             $table->string('password');
+
+            // oauth tracker fields
+            $table->string('oauth_token')->nullable();
+            $table->string('oauth_token_secret')->nullable();
 
             // Define index
             $table->index('username', 'password');
@@ -56,7 +60,7 @@ class CreateAllTables extends Migration {
             $table->increments('id');
             $table->timestamps();
             $table->string('email');
-            $table->string('message');
+            $table->text('message');
             $table->string('gravatar');
             $table->integer('thread_id')->unsigned();
 

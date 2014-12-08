@@ -10,28 +10,34 @@ angular.module('CommenterApp', ['vcRecaptcha'])
 
       // infinite scroll variables
       $scope.currentRecord = 0;
-      $scope.getPerTrip    = 5;
+      $scope.getPerTrip    = 10;
+      $scope.reverseSort   = false;
       
       $scope.numPages = function () {
         return Math.ceil($scope.comments.length / $scope.numPerPage);
       };
 
       // @type function Get the local data store from the jsonp server
-      // @param start (optional) The start point to get records
-      // @param count (optional) How many records to get
-      $scope.getComments = function (start, count) {
+      // @param start    (optional) The start point to get records
+      // @param count    (optional) How many records to get
+      // @param clearOld (optional) True to clear all the old records
+      $scope.getComments = function (start, count, clearOld) {
         // Default the arguments
         start = start || 0;
         count = count || $scope.getPerTrip;
 
         // Call the list route with the limits
         $http.jsonp('/api/thread/all/' +
-          $scope.threadid + '/' + start + '/' + count + 
+          $scope.threadid + '/' + start + '/' + count + '/' +
+          (($scope.reverseSort) ? 1 : 0 ) +
           '?callback=JSON_CALLBACK').
           success(function(data, status, headers, config) {
             if (data.messages) {
 
               console.log('got data:', data);
+              if (clearOld) {
+                $scope.comments = [];
+              }
               // Add the retrieved messages to the currently held data
               $scope.comments = $scope.comments.concat(data.messages);
 
@@ -41,6 +47,16 @@ angular.module('CommenterApp', ['vcRecaptcha'])
               console.log('size of recordset: ' + $scope.currentRecord);
             }
           });
+      };
+
+      // @type function toggle the order of the messages presented on the thread
+      $scope.toggleOrder = function () {
+        // reverse the bool tracker
+        $scope.reverseSort = !$scope.reverseSort;
+        // reset the current position
+        $scope.currentRecord = 0;
+        // clear the local messages on the refresh
+        $scope.getComments(0, $scope.getPerTrip, true);
       };
 
       // @type function Determine if the comment is valid

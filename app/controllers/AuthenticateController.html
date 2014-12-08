@@ -1,0 +1,15 @@
+<?php
+ 
+class AuthenticateController extends BaseController {
+ 
+  /**
+   * Create a new instance of the AuthenticateController
+   *
+   * @return void
+   */
+  public function __construct()
+  {
+    $this->beforeFilter('invite');
+  }
+ 
+}

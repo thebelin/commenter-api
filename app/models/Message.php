@@ -9,5 +9,18 @@ class Message extends Eloquent {
 	{
 		return $this->belongsTo('Thread');
 	}
+	public function user()
+	{
+		return $this->hasOne('User');
+	}
+	public function upvote()
+	{
+		return $this->hasMany('upvote');
+	}
+
+	public function downvote()
+	{
+		return $this->hasMany('downvote');
+	}
 
 }

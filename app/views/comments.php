@@ -6,9 +6,14 @@
     <div class="welcome">
         <b>Comments:</b>
     </div>
+    <div class = "commentSort" data-ng-click = "toggleOrder()" alt = "Reverse">
+        <i class = "fa fa-clock-o"></i>
+        <i data-ng-class = "{fa:1, 'fa-arrow-down':!reverseSort,'fa-arrow-up':reverseSort}"></i>
+    </div>
     <!-- This is the infinite scrolling content -->
     <div class = "commentList" id = "commentList"
         data-ng-scroll = "listScroll()">
+        <!-- an indicator for scroll direction -->
         <div
             data-ng-repeat      = "comment in comments"
             data-boundary-links = "true"

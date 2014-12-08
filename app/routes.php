@@ -9,12 +9,13 @@
 // Base route handles users showing up at the url and creates an interface
 // They will need to be assigned to a thread based on the site which the widget is embedded in
 Route::any('/', function () {
-    return View::make('comments');
+    return View::make('hello');
 });
 
 // A route for script injection of comment widget
 Route::any('/inject', function () {
-    return View::make('hello');
+    $injectObj = new InjectController;
+    return $injectObj->inject();
 });
 
 // Generic route for message activities

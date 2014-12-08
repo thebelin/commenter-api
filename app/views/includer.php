@@ -172,29 +172,4 @@
     config._appendToBody(widgetId, config.widgets[widgetId]);
   }
 
-}(document, {
-  // Script Sources to be used in the page
-  sources : [
-    "//ajax.googleapis.com/ajax/libs/angularjs/1.3.1/angular.min.js",
-    "//www.google.com/recaptcha/api/js/recaptcha_ajax.js",
-    "/script/angular-recaptcha.min.js"
-  ],
-
-  // Style sources to be added to the page  
-  styles : [
-    "//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css",
-    "//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css"
-  ],
-
-  // widgets with the id of the element to add them to
-  widgets : {
-    commenter: "<div class='test' data-test-data='test'><h1><i class='fa fa-wrench'></i>&nbsp;Work in progress</h1></div>",
-    article:   "<div class='testArticle' data-test-data='the real article'></div>"
-  },
-
-  // This function is run when all the things are done
-  init : function () {
-    console.log('running init');
-  }
-
-}));
+}(document, <?=json_encode($config)?>));
